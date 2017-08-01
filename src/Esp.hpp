@@ -10,6 +10,8 @@
 #include <WiFiManager.h>
 #include <ESP8266mDNS.h>
 
+#include "Ota.hpp"
+
 #include "IJob.hpp"
 
 #include "DeepSleep.hpp"

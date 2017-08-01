@@ -22,11 +22,13 @@ Esp::Esp(std::string const& hostname, std::string const& ApSsid,
     ESP.reset();
     delay(5000);
   }
+
+  setupOta();
 }
 
 void Esp::run() {
-   _job->run();
-   enterDeepSleep(1);
+  _job->run();
+  handleOta();
 }
 
 void Esp::_apCallback() {
