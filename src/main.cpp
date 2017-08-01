@@ -1,19 +1,38 @@
-#include <Arduino.h>
+//#include <FS.h> //this needs to be first, or it all crashes and burns...
 
-unsigned long time;
+#include "Esp.hpp"
 
-void setup()
-{
-  Serial.begin(9600);
+#include <memory>
+
+#define BAUD_RATE 115200
+#define HOSTNAME "velux"
+#define WIFIAPSSID "velux"
+#define WIFIAPPASS "esp8266"
+
+std::unique_ptr<Esp> esp;
+
+void setup() {
+  delay(1);
+  //   Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_TX_ONLY);
+  Serial.begin(BAUD_RATE);
+  while (!Serial) {
+    yield();
+  }
+  ESP.eraseConfig();
+  pinMode(0, OUTPUT);
+  digitalWrite(0, LOW);
+  Serial.println(F("Starting ESP8266"));
+  Serial.println(ESP.getResetInfo());
+
+  esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS, std::unique_ptr<IJob>(nullptr)));
+  if (!esp) {
+    Serial.println(F("Error starting bye"));
+    ESP.reset();
+  }
+  Serial.println(F("Setup done!"));
 }
 
-
-void loop()
-{
-  Serial.print("Time: ");
-  time = micros();
-  //prints time since program started
-  Serial.println(time);
-  // wait a second so as not to send massive amounts of data
-  delay(1000);
+void loop() {
+  esp->run();
 }
+
