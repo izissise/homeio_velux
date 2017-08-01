@@ -6,6 +6,8 @@
 #include <string>
 #include <memory>
 
+#include <FS.h>
+
 #include <ESP8266WiFi.h>
 #include <WiFiManager.h>
 #include <ESP8266mDNS.h>
@@ -15,6 +17,9 @@
 #include "IJob.hpp"
 
 #include "DeepSleep.hpp"
+
+constexpr char* SsidFile = "etc/ssid"
+constexpr char* PasswordFile = "etc/password"
 
 class Esp {
 public:

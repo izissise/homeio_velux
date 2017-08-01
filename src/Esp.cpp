@@ -12,6 +12,20 @@ Esp::Esp(std::string const& hostname, std::string const& ApSsid,
     ESP.reset();
   }
   gEsp = this;
+
+  SPIFFS.begin();
+
+  char ssid[256];
+  char passwd[256];
+  if (SPIFFS.exists(SsidFile) && SPIFFS.exists(PasswordFile)) {
+    File ssid_file = SPIFFS.open(SsidFile, "r");
+    ssid_file.readString().toCharArray(ssid, 256);
+    ssid_file.close();
+    File passwd_file = SPIFFS.open(PasswordFile, "r");
+    passwd_file.readString().toCharArray(passwd, 256);
+    passwd_file.close();
+  }
+
   _wifiManager.setDebugOutput(false);
   _wifiManager.setConfigPortalTimeout(3600); //sets timeout until configuration portal gets turned off in seconds
   _wifiManager.setAPCallback([] (WiFiManager*) { gEsp->_apCallback(); });
