@@ -2,6 +2,8 @@
 
 #include "Esp.hpp"
 
+#include "Velux.hpp"
+
 #include <memory>
 
 #define BAUD_RATE 115200
@@ -24,7 +26,7 @@ void setup() {
   Serial.println(F("Starting ESP8266"));
   Serial.println(ESP.getResetInfo());
 
-  esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS, std::unique_ptr<IJob>(nullptr)));
+  esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS, std::unique_ptr<IJob>(new Velux())));
   if (!esp) {
     Serial.println(F("Error starting bye"));
     ESP.reset();
