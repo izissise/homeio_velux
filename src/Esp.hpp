@@ -10,6 +10,8 @@
 #include <WiFiManager.h>
 #include <ESP8266mDNS.h>
 
+#include "TimerManager.hpp"
+
 #include "Ota.hpp"
 
 #include "IJob.hpp"
@@ -33,6 +35,7 @@ protected:
   std::string _hostname;
   bool _connected;
 
+  TimerManager _timerManager;
   std::unique_ptr<IJob> _job;
   WiFiManager _wifiManager;
 };

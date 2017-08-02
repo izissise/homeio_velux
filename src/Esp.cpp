@@ -27,7 +27,8 @@ Esp::Esp(std::string const& hostname, std::string const& ApSsid,
 }
 
 void Esp::run() {
-  _job->run();
+  _timerManager.update();
+  _job->run(_timerManager);
   handleOta();
 }
 
