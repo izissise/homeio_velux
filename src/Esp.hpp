@@ -28,8 +28,10 @@ public:
 
   bool isConnected() const { return _connected; };
 
+  void displayConnectionInfos() const;
+
   void _apCallback();
-  void _connectCallback();
+  void _newconfCallback();
 
 protected:
   std::string _hostname;

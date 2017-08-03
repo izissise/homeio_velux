@@ -1,13 +1,13 @@
 #ifndef _VELUX_HPP_
 #define _VELUX_HPP_
 
+#include <ESP8266WebServer.h>
+
 #include "IJob.hpp"
 
 #include "S4624Proto.hpp"
 
 constexpr int8_t dataPin = 2;
-constexpr uint32_t picTimeuS = 416;
-constexpr uint32_t separatorTimeuS = picTimeuS * 4; // 1260
 
 class Velux : public IJob {
 public:
@@ -22,16 +22,20 @@ public:
 private:
   void switchSignal();
 
+  void _handleRoot();
+  void _request();
+
+private:
+  ESP8266WebServer _server;
+
 private:
   uint8_t _signal;
   bool _sending;
-  uint8_t _data;
-  uint8_t _wantedData;
 
   uint8_t _pos;
-  uint8_t _sepa;
-  uint8_t _lastChangeTick;
   uint8_t _tickCount;
+  uint8_t* _data;
+  uint8_t* _wantedData;
 };
 
 #endif

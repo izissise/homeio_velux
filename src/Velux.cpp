@@ -2,11 +2,18 @@
 
 #include <Arduino.h>
 
-Velux::Velux() {
+Velux::Velux()
+: _server(80) {
+  _data = nullptr;
+  _wantedData = nullptr;
   _sending = false;
   _signal = 1;
   pinMode(dataPin, OUTPUT);
   switchSignal();
+  _server.on("/", [this]() { _handleRoot(); });
+  _server.on("/velux", [this]() { _request(); });
+  _server.onNotFound([this]() { _server.send(200, "text/plain", "Not found"); });
+  _server.begin();
 }
 
 void Velux::handleSignal() {
@@ -17,49 +24,49 @@ void Velux::handleSignal() {
         switchSignal();
 
       _pos = 0;
-      _sepa = 1;
-      _lastChangeTick = 0;
       _tickCount = 0;
       _data = _wantedData;
       _sending = true;
     }
     return;
   }
-  if (_sepa) {
-    if (_tickCount - _lastChangeTick >= 6) {
-      _lastChangeTick = _tickCount;
-      _sepa = 0;
-      switchSignal();
-    }
-  } else {
-    uint8_t bit = ((_data) >> (7 - _pos)) & 0x01;
-    if (_tickCount - _lastChangeTick >= 2) {
-      if (bit == 0 || ((_tickCount - _lastChangeTick) >= 4)) {
-        _lastChangeTick = _tickCount;
-        _pos = _pos + 1;
-        _sepa = 1;
-      }
-      switchSignal();
-      if (_pos > 7) {
-        _sending = 0;
-      }
-    }
+  if (_data[_pos] == 0) {
+    _sending = false;
+    return;
+  }
+  if (_tickCount >= _data[_pos]) {
+    switchSignal();
+    _pos = _pos + 1;
   }
 }
+
 void Velux::switchSignal() {
   _signal = _signal ? 0 : 1;
   digitalWrite(dataPin, _signal);
 }
 
 void Velux::passTimeManager(TimerManager& tm) {
-  tm.every(picTimeuS / 2, [](void* arg) {
+  tm.every(tickInus, [](void* arg) {
     Velux* v = static_cast<Velux*>(arg);
     v->handleSignal();
   }, static_cast<void*>(this));
 }
 
 void Velux::run() {
-  if (_sending)
-    return;
-  uint8_t _wantedData = s4624Proto(Rotor::M2, Way::UP);
+  _server.handleClient();
 }
+
+void Velux::_handleRoot() {
+  _server.send(200, "text/plain", String(_signal));
+}
+
+void Velux::_request() {
+  auto rotor = _server.arg("rotor");
+  auto way = _server.arg("way");
+  Rotor r = (rotor == "M1") ? Rotor::M1 : (rotor == "M2") ? Rotor::M2 : Rotor::M3;
+  Way w = (way == "UP") ? Way::UP : (way == "DOWN") ? Way::DOWN : Way::STOP;
+  _wantedData = s4624Proto(r, w);
+  _server.send(200, "text/plain", "ok");
+}
+
+

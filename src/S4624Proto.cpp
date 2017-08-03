@@ -13,23 +13,29 @@
 // 2-mid.csv:  |1||1| 0||0| 1| 0| 0| 0
 // 3-mid.csv:  |1||1| 0||0| 1| 0| 0| 0
 
-uint8_t s4624Proto(Rotor r, Way w) {
-  uint8_t command;
+static uint8_t stop[] =      {15,21,26,42,58,63,69,84,90,106,121,127,142,148,154,169,175,190,196,212,217,233,238,0};
+static uint8_t oneUp[] =     {15,21,26,42,58,63,69,84,100,106,111,127,132,148,154,169,175,190,196,212,227,233,238,0};
+static uint8_t oneDown[] =   {15,21,26,42,58,63,69,84,100,106,111,127,132,148,154,169,175,190,196,212,227,233,238,0};
+static uint8_t twoUp[] =     {15,21,26,42,58,63,69,84,100,106,111,127,132,148,154,169,175,190,206,212,217,233,238,0};
+static uint8_t twoDown[] =   {15,21,26,42,58,63,69,84,100,106,111,127,132,148,154,169,185,191,196,212,217,233,238,0};
+static uint8_t threeUp[] =   {15,21,26,42,58,63,69,84,100,106,111,127,132,148,154,169,175,190,196,212,217,233,238,0};
+static uint8_t threeDown[] = {15,21,26,42,58,63,69,84,100,106,111,127,142,148,154,169,175,190,196,212,217,233,238,0};
+
+uint8_t* s4624Proto(Rotor r, Way w) {
   if (w == Way::STOP) {
-    command = 0b11001000;
+    return stop;
   } else {
-    command = 0b11100000;
     switch (r) {
       case Rotor::M1:
-        command |= (w == Way::UP) ? 0b00000001 : 0b00001000;
+        return (w == Way::UP) ? oneUp : oneDown;
       break;
       case Rotor::M2:
-        command |= (w == Way::UP) ? 0b00000010 : 0b00000100;
+        return (w == Way::UP) ? twoUp : twoDown;
       break;
       case Rotor::M3:
-        command |= (w == Way::UP) ? 0b00000000 : 0b00010000;
+        return (w == Way::UP) ? threeUp : threeDown;
       break;
     }
   }
-  return command;
+  return nullptr;
 }
