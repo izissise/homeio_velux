@@ -2,6 +2,11 @@
 
 #include <Arduino.h>
 
+TimerManager::TimerManager() {
+  for (uint8_t i = 0; i < maxNumberOfEvents; ++i) {
+    _events[i].period = 0;
+  }
+}
 
 void TimerManager::every(uint32_t period, void (*callback)(void*), void* arg, int16_t repeatCount){
   const int8_t idx = findFreeEventIndex();

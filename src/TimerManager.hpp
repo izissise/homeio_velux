@@ -4,13 +4,12 @@
 #include <cstdint>
 #include <functional>
 
-#define MAX_NUMBER_OF_EVENTS (10)
+constexpr static int8_t maxNumberOfEvents = 10;
 
 class TimerManager {
 public:
-  static const int8_t maxNumberOfEvents = 10;
 
-  TimerManager() = default;
+  TimerManager();
   ~TimerManager() = default;
 
   void every(uint32_t period, void (*callback)(void*), void* arg);

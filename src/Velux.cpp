@@ -11,7 +11,7 @@ Velux::Velux() {
 
 void Velux::handleSignal() {
   _tickCount = _tickCount + 1;
-  if (!_signal)
+  if (!_sending)
     return;
   if (_sepa) {
     if (_tickCount - _lastChangeTick >= 4) {
@@ -28,7 +28,7 @@ void Velux::handleSignal() {
       switchSignal();
       _pos = _pos + 1;
       if (_pos > 8) {
-        _signal = 0;
+        _sending = 0;
       }
     }
   }
