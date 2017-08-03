@@ -7,7 +7,8 @@ class IJob {
 public:
   virtual ~IJob() = default;
 
-  virtual void run(TimerManager& tm) = 0;
+  virtual void passTimeManager(TimerManager& tm) = 0;
+  virtual void run() = 0;
 };
 
 #endif // IJOB_HPP

@@ -24,11 +24,12 @@ Esp::Esp(std::string const& hostname, std::string const& ApSsid,
   }
 
   setupOta();
+  _job->passTimeManager(_timerManager);
 }
 
 void Esp::run() {
   _timerManager.update();
-  _job->run(_timerManager);
+  _job->run();
   handleOta();
 }
 
