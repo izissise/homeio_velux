@@ -6,8 +6,8 @@
 #include "S4624Proto.hpp"
 
 constexpr int8_t dataPin = 2;
-constexpr uint32_t separatorTimeuS = 1260;
 constexpr uint32_t picTimeuS = 416;
+constexpr uint32_t separatorTimeuS = picTimeuS * 4; // 1260
 
 class Velux : public IJob {
 public:
@@ -26,6 +26,7 @@ private:
   uint8_t _signal;
   bool _sending;
   uint8_t _data;
+  uint8_t _wantedData;
 
   uint8_t _pos;
   uint8_t _sepa;
