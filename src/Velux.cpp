@@ -7,7 +7,7 @@ Velux::Velux()
   _data = nullptr;
   _wantedData = nullptr;
   _sending = false;
-  _signal = 1;
+  _signal = 0;
   pinMode(dataPin, OUTPUT);
   switchSignal();
   _server.on("/", [this]() { _handleRoot(); });
@@ -19,8 +19,11 @@ Velux::Velux()
 void Velux::handleSignal() {
   _tickCount = _tickCount + 1;
   if (!_sending) {
+    if (_tickCount > 252 && _signal == 0) {
+      switchSignal();
+    }
     if (_wantedData != _data) {
-      if (_signal == 1)
+      if (_signal == 0)
         switchSignal();
 
       _pos = 0;

@@ -12,7 +12,7 @@ void TimerManager::every(uint32_t period, void (*callback)(void*), void* arg, in
   const int8_t idx = findFreeEventIndex();
   _events[idx].period = period;
   _events[idx].repeatCount = repeatCount;
-  _events[idx].lastTime = millis();
+  _events[idx].lastTime = micros();
   _events[idx].func = [arg, callback]() { callback(arg); };
 }
 
@@ -26,7 +26,7 @@ void TimerManager::after(uint32_t duration, void (*callback)(void*), void* arg) 
 
 
 void TimerManager::update() {
-  update(millis());
+  update(micros());
 }
 
 void TimerManager::update(uint32_t now) {
