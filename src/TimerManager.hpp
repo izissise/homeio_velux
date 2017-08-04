@@ -4,7 +4,8 @@
 #include <cstdint>
 #include <functional>
 
-constexpr static int8_t maxNumberOfEvents = 10;
+constexpr static uint32_t nowMaxValue = 0xffffffff;
+constexpr static int8_t maxNumberOfEvents = 4;
 
 class TimerManager {
 public:
@@ -28,8 +29,11 @@ public:
   };
 
 private:
-  timer _events[maxNumberOfEvents];
   int8_t findFreeEventIndex();
+
+private:
+  timer _events[maxNumberOfEvents];
+  uint32_t _nAt;
 };
 
 #endif
