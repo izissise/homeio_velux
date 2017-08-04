@@ -36,6 +36,9 @@ private:
   uint8_t _tickCount;
   uint8_t* _data;
   uint8_t* _wantedData;
+
+  String _rotor;
+  String _way;
 };
 
 #endif

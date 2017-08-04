@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 Velux::Velux()
-: _server(80) {
+: _server(80), _rotor(""), _way("") {
   _data = nullptr;
   _wantedData = nullptr;
   _sending = false;
@@ -60,16 +60,22 @@ void Velux::run() {
 }
 
 void Velux::_handleRoot() {
-  _server.send(200, "text/plain", String(_signal));
+  _server.send(200, "text/plain", "Rotor: " + _rotor + " Way: " + _way);
 }
 
 void Velux::_request() {
   auto rotor = _server.arg("rotor");
   auto way = _server.arg("way");
-  Rotor r = (rotor == "M1") ? Rotor::M1 : (rotor == "M2") ? Rotor::M2 : Rotor::M3;
-  Way w = (way == "UP") ? Way::UP : (way == "DOWN") ? Way::DOWN : Way::STOP;
+  Rotor r = (rotor == "M1") ? Rotor::M1 : (rotor == "M2") ? Rotor::M2 : (rotor == "M3") ? Rotor::M3 : Rotor::M3;
+  Way w = (way == "UP") ? Way::UP : (way == "DOWN") ? Way::DOWN : (way == "STOP") ? Way::STOP : Way::STOP;
+  if ((r == Rotor::M3 && rotor != "M3") || (w == Way::STOP && way != "STOP")) {
+    _server.send(409, "text/plain", "Error");
+    return;
+  }
+  _rotor = rotor;
+  _way = way;
   _wantedData = s4624Proto(r, w);
-  _server.send(200, "text/plain", "ok");
+  _server.send(200, "text/plain", "Ok");
 }
 
 
