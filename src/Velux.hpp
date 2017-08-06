@@ -30,10 +30,11 @@ private:
 
 private:
   uint8_t _signal;
+  uint8_t _timeSent;
   bool _sending;
 
   uint8_t _pos;
-  uint8_t _tickCount;
+  uint16_t _tickCount;
   uint8_t* _data;
   uint8_t* _wantedData;
 
