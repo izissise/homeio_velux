@@ -13,9 +13,9 @@ public:
   TimerManager();
   ~TimerManager() = default;
 
-  void every(uint32_t period, void (*callback)(void*), void* arg);
-  void every(uint32_t period, void (*callback)(void*), void* arg, int16_t repeatCount);
-  void after(uint32_t duration, void (*callback)(void*), void* arg);
+  void every(uint32_t period, std::function<void()> callback);
+  void every(uint32_t period, std::function<void()> callback, int16_t repeatCount);
+  void after(uint32_t duration, std::function<void()> callback);
 
   void update();
   void update(uint32_t now);

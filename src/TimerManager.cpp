@@ -9,21 +9,21 @@ TimerManager::TimerManager() {
   }
 }
 
-void TimerManager::every(uint32_t period, void (*callback)(void*), void* arg, int16_t repeatCount){
+void TimerManager::every(uint32_t period, std::function<void()> callback, int16_t repeatCount){
   const int8_t idx = findFreeEventIndex();
   _events[idx].period = period;
   _events[idx].repeatCount = repeatCount;
   _events[idx].lastTime = micros();
-  _events[idx].func = [arg, callback]() { callback(arg); };
+  _events[idx].func = callback;
   _nAt = 0;
 }
 
-void TimerManager::every(uint32_t period, void (*callback)(void*), void* arg) {
-  every(period, callback, arg, -1);
+void TimerManager::every(uint32_t period, std::function<void()> callback) {
+  every(period, callback, -1);
 }
 
-void TimerManager::after(uint32_t duration, void (*callback)(void*), void* arg) {
-  every(duration, callback, arg, 1);
+void TimerManager::after(uint32_t duration, std::function<void()> callback) {
+  every(duration, callback, 1);
 }
 
 

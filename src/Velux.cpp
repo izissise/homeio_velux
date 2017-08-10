@@ -56,10 +56,9 @@ void Velux::switchSignal() {
 }
 
 void Velux::passTimeManager(TimerManager& tm) {
-  tm.every(tickInus, [](void* arg) {
-    Velux* v = static_cast<Velux*>(arg);
-    v->handleSignal();
-  }, static_cast<void*>(this));
+  tm.every(tickInus, [this]() {
+    handleSignal();
+  });
 }
 
 void Velux::run() {
