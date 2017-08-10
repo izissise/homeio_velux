@@ -16,6 +16,7 @@ Esp::Esp(std::string const& hostname, std::string const& ApSsid,
   _wifiManager.setConfigPortalTimeout(3600); //sets timeout until configuration portal gets turned off in seconds
   _wifiManager.setAPCallback([] (WiFiManager*) { gEsp->_apCallback(); });
   _wifiManager.setSaveConfigCallback([] () { gEsp->_newconfCallback(); });
+  Serial.println("Waiting wifi...");
   if (!_wifiManager.autoConnect(ApSsid.c_str(), ApPass.c_str())) {
     Serial.println("Failed to connect and hit timeout");
     delay(3000);
@@ -30,6 +31,9 @@ Esp::Esp(std::string const& hostname, std::string const& ApSsid,
 
 //   setupOta();
   _job->passTimeManager(_timerManager);
+  _timerManager.every(20000000, []() {
+    Serial.print("."); // Blink using serial
+  }); // Blinking led
 }
 
 void Esp::run() {
