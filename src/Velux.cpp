@@ -20,7 +20,7 @@ Velux::Velux()
 void Velux::handleSignal() {
   _tickCount = _tickCount + 1;
   if (!_sending) {
-    if (_tickCount > 253 && _signal == 0) {
+    if (_tickCount > 7168 && _signal == 0) {
       switchSignal();
     }
     if (_wantedData != _data) {
@@ -44,7 +44,7 @@ void Velux::handleSignal() {
     }
     return;
   }
-  if (_tickCount >= ((uint16_t)_data[_pos] + (uint16_t)(_timeSent * 650))) {
+  if (_tickCount >= (_data[_pos] + (_timeSent * 2600))) {
     switchSignal();
     _pos = _pos + 1;
   }

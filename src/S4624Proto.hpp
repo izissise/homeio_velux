@@ -15,8 +15,8 @@ enum class Way {
   STOP
 };
 
-constexpr uint8_t tickInus = 2 * 40; // 50KHz -> 20us (2 ?) , all value divided by 40
+constexpr uint16_t tickInus = 2 * 10; // 50KHz -> 20us (2 ?) , all value divided by 40
 
-uint8_t* s4624Proto(Rotor r, Way w);
+uint16_t* s4624Proto(Rotor r, Way w);
 
 #endif

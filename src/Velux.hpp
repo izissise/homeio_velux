@@ -29,14 +29,14 @@ private:
   ESP8266WebServer _server;
 
 private:
-  uint8_t _signal;
-  uint8_t _timeSent;
-  bool _sending;
+  uint8_t _signal; // Electric signal value
+  uint16_t _timeSent;
+  bool _sending; // Is sending
 
   uint8_t _pos;
   uint16_t _tickCount;
-  uint8_t* _data;
-  uint8_t* _wantedData;
+  uint16_t* _data;
+  uint16_t* _wantedData;
 
   String _rotor;
   String _way;
