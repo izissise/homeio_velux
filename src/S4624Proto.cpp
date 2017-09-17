@@ -1,41 +1,48 @@
 #include "S4624Proto.hpp"
 
-// 1-up.csv:   |1||1||1| 0| 0| 0| 0||1
-// 1-down.csv: |1||1||1| 0||1| 0| 0| 0
+constexpr Signal L = Signal::LONG;
+constexpr Signal S = Signal::SHORT;
+constexpr Signal STOP = Signal::STOP;
 
-// 2-up.csv:   |1||1||1| 0| 0| 0||1| 0
-// 2-down.csv: |1||1||1| 0| 0||1| 0| 0
+static constexpr Signal oneDown[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,L,S,S,L,S,L,S,L,S,STOP};
+static constexpr Signal stop[] =      {L,S,S,L,L,S,S,L,S,L,L,S,L,S,S,L,S,L,S,L,S,L,S,STOP};
+static constexpr Signal oneUp[] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,L,L,S,S,STOP};
+static constexpr Signal twoDown[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,L,S,S,L,S,L,S,STOP};
+static constexpr Signal twoUp[] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,L,S,S,L,S,STOP};
+static constexpr Signal threeDown[] = {L,S,S,L,L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,STOP};
+static constexpr Signal threeUp[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,L,S,L,L,STOP};
 
-// 3-up.csv:   |1||1||1| 0| 0| 0| 0| 0
-// 3-down.csv: |1||1||1||1| 0| 0| 0| 0
+static uint16_t actionBuffer[32] = {0};
 
-// 1-mid.csv:  |1||1| 0||0| 1| 0| 0| 0
-// 2-mid.csv:  |1||1| 0||0| 1| 0| 0| 0
-// 3-mid.csv:  |1||1| 0||0| 1| 0| 0| 0
-
-static uint16_t stop[] =      {1,65,87,109,172,234,256,278,341,363,426,489,511,573,596,618,681,702,765,787,850,872,934,956,0};
-static uint16_t oneUp[] =     {1,64,87,108,171,234,256,278,341,403,426,448,511,533,596,618,681,702,765,787,850,912,935,957,0};
-static uint16_t oneDown[] =   {1,64,87,108,171,234,256,278,341,403,426,448,511,533,596,618,681,702,765,787,850,912,935,957,0}; // Need rework
-static uint16_t twoUp[] =     {1,64,87,108,171,234,256,278,341,403,426,448,511,533,596,618,681,702,765,828,850,872,935,957,0};
-static uint16_t twoDown[] =   {1,65,87,108,171,234,256,278,341,403,426,448,511,533,596,618,681,743,766,787,850,872,935,957,0};
-static uint16_t threeUp[] =   {1,65,87,108,171,234,256,278,341,403,426,448,511,533,596,618,681,702,765,787,850,871,934,998,0};
-static uint16_t threeDown[] = {1,65,87,108,171,234,256,278,341,403,426,448,511,573,596,618,681,702,765,787,850,871,934,956,0};
-
-uint16_t* s4624Proto(Rotor r, Way w) {
-  if (w == Way::STOP) {
-    return stop;
-  } else {
-    switch (r) {
-      case Rotor::M1:
-        return (w == Way::UP) ? oneUp : oneDown;
-      break;
-      case Rotor::M2:
-        return (w == Way::UP) ? twoUp : twoDown;
-      break;
-      case Rotor::M3:
-        return (w == Way::UP) ? threeUp : threeDown;
-      break;
-    }
+void actionToBuffer(const Signal* actions) {
+  int j = 0;
+  int timing = 100;
+  actionBuffer[j] = timing;
+  j += 1;
+  for (int i = 0; actions[i] != STOP; ++i) {
+    uint16_t value = (actions[i] == L) ? nbTickLong : nbTickShort;
+    timing += value;
+    actionBuffer[j] = timing;
+    j += 1;
   }
-  return nullptr;
+  actionBuffer[j] = 0;
+}
+
+const uint16_t* s4624Proto(Rotor r, Way w) {
+  switch (r) {
+    case Rotor::M1:
+      actionToBuffer((w == Way::UP) ? oneUp : oneDown);
+    break;
+    case Rotor::M2:
+      actionToBuffer((w == Way::UP) ? twoUp : twoDown);
+    break;
+    case Rotor::M3:
+      actionToBuffer((w == Way::UP) ? threeUp : threeDown);
+    break;
+    default:
+      actionToBuffer(stop);
+    break;
+  }
+
+  return actionBuffer;
 }

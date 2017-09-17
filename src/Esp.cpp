@@ -5,13 +5,14 @@
 static Esp* gEsp = nullptr;
 
 Esp::Esp(std::string const& hostname, std::string const& ApSsid,
-         std::string const& ApPass, std::unique_ptr<IJob> job)
-: _hostname(hostname), _connected(false), _job(std::move(job)) {
+         std::string const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob)
+: _hostname(hostname), _connected(false) {
   if (gEsp) {
     Serial.println("An Esp object have already been created -> reset");
     ESP.reset();
   }
   gEsp = this;
+
   _wifiManager.setDebugOutput(false);
   _wifiManager.setConfigPortalTimeout(3600); //sets timeout until configuration portal gets turned off in seconds
   _wifiManager.setAPCallback([] (WiFiManager*) { gEsp->_apCallback(); });
@@ -30,10 +31,10 @@ Esp::Esp(std::string const& hostname, std::string const& ApSsid,
   displayConnectionInfos();
 
 //   setupOta();
-  _job->passTimeManager(_timerManager);
-  _timerManager.every(20000000, []() {
+  _timerManager.every(500000, []() {
     Serial.print("."); // Blink using serial
   }); // Blinking led
+  _job = std::move(createJob(_timerManager));
 }
 
 void Esp::run() {

@@ -4,17 +4,22 @@
 #include <ESP8266WebServer.h>
 
 #include "IJob.hpp"
+#include "TimerManager.hpp"
 
 #include "S4624Proto.hpp"
 
 constexpr int8_t dataPin = 2;
 
+constexpr uint16_t backupSignalStartTick = 2600;
+constexpr uint16_t timeoutLastCheckTick = 7168;
+
+constexpr uint8_t signalStartValue = 1;
+
 class Velux : public IJob {
 public:
-  Velux();
+  Velux(TimerManager& tm);
   ~Velux() = default;
 
-  void passTimeManager(TimerManager& tm) override;
   void run() override;
 
   void handleSignal();
@@ -30,13 +35,14 @@ private:
 
 private:
   uint8_t _signal; // Electric signal value
+  uint8_t _megaSignalStartValue;
   uint16_t _timeSent;
   bool _sending; // Is sending
 
   uint8_t _pos;
   uint16_t _tickCount;
-  uint16_t* _data;
-  uint16_t* _wantedData;
+  bool _needSend;
+  const uint16_t* _data;
 
   String _rotor;
   String _way;

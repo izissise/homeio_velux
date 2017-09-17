@@ -9,7 +9,7 @@
 #define BAUD_RATE 115200
 #define HOSTNAME "velux"
 #define WIFIAPSSID "velux"
-#define WIFIAPPASS "esp8266"
+#define WIFIAPPASS "esp8266wifi"
 
 std::unique_ptr<Esp> esp;
 
@@ -26,7 +26,9 @@ void setup() {
   Serial.println(F("Starting ESP8266"));
   Serial.println(ESP.getResetInfo());
 
-  esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS, std::unique_ptr<IJob>(new Velux())));
+  esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS, [](TimerManager& tm) {
+    return std::unique_ptr<IJob>(new Velux(tm));
+  }));
   if (!esp) {
     Serial.println(F("Error starting bye"));
     ESP.reset();
@@ -37,4 +39,3 @@ void setup() {
 void loop() {
   esp->run();
 }
-

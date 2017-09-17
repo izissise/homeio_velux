@@ -5,6 +5,7 @@
 
 #include <string>
 #include <memory>
+#include <functional>
 
 #include <ESP8266WiFi.h>
 #include <WiFiManager.h>
@@ -21,7 +22,7 @@
 class Esp {
 public:
   Esp(std::string const& hostname, std::string const& ApSsid,
-      std::string const& ApPass, std::unique_ptr<IJob> job);
+      std::string const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob);
   virtual ~Esp() = default;
 
   virtual void run(); // Call in loop()
