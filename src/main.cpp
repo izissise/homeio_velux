@@ -27,7 +27,7 @@ void setup() {
   Serial.println(ESP.getResetInfo());
 
   esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS, [](TimerManager& tm) {
-    return std::unique_ptr<IJob>(new Velux(tm));
+    return std::unique_ptr<IJob>(new Velux(tm, TELEGRAMBOTTOKEN));
   }));
   if (!esp) {
     Serial.println(F("Error starting bye"));

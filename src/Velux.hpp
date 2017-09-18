@@ -1,7 +1,12 @@
 #ifndef _VELUX_HPP_
 #define _VELUX_HPP_
 
+#include <vector>
+#include <algorithm>
+
 #include <ESP8266WebServer.h>
+
+#include <UniversalTelegramBot.h>
 
 #include "IJob.hpp"
 #include "TimerManager.hpp"
@@ -13,11 +18,13 @@ constexpr int8_t dataPin = 2;
 constexpr uint16_t backupSignalStartTick = 2010;
 constexpr uint16_t timeoutLastCheckTick = 7168;
 
+constexpr uint16_t botMtbs = 500; //mean time between scan messages
+
 constexpr uint8_t signalStartValue = 0;
 
 class Velux : public IJob {
 public:
-  Velux(TimerManager& tm);
+  Velux(TimerManager& tm, std::string const& telegramToken);
   ~Velux() = default;
 
   void run() override;
@@ -30,8 +37,12 @@ private:
   void _handleRoot();
   void _request();
 
+  void handleNewMessages(int numNewMessages);
+
 private:
   ESP8266WebServer _server;
+  WiFiClientSecure _wifiClient;
+  UniversalTelegramBot _bot;
 
 private:
   uint8_t _signal; // Electric signal value
@@ -44,8 +55,8 @@ private:
   bool _needSend;
   const uint16_t* _data;
 
-  String _rotor;
-  String _way;
+  std::vector<String> _userChatIds;
+  uint16_t _Bot_lasttime;   //last time messages' scan has been dones
 };
 
 #endif
