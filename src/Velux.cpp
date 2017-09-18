@@ -37,6 +37,9 @@ Velux::Velux(TimerManager& tm)
   tm.every(tickInus, [this]() {
     handleSignal();
   });
+
+  _data = s4624Proto(Rotor::M1, Way::STOP);
+  _needSend = true;
 }
 
 void Velux::handleSignal() {
@@ -48,7 +51,6 @@ void Velux::handleSignal() {
     if (_needSend) {
       if (_signal == _megaSignalStartValue)
         noInterrupts(); // Disable interrupt
-        switchSignal();
 
       _pos = 0;
       _tickCount = 0;
@@ -80,7 +82,7 @@ void Velux::switchSignal() {
 }
 
 void Velux::run() {
-  if (_sending == 0) {
+  if (_sending == false) {
     _server.handleClient();
   }
 }

@@ -10,10 +10,10 @@
 
 constexpr int8_t dataPin = 2;
 
-constexpr uint16_t backupSignalStartTick = 2600;
+constexpr uint16_t backupSignalStartTick = 2010;
 constexpr uint16_t timeoutLastCheckTick = 7168;
 
-constexpr uint8_t signalStartValue = 1;
+constexpr uint8_t signalStartValue = 0;
 
 class Velux : public IJob {
 public:

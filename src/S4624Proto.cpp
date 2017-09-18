@@ -4,8 +4,8 @@ constexpr Signal L = Signal::LONG;
 constexpr Signal S = Signal::SHORT;
 constexpr Signal STOP = Signal::STOP;
 
-static constexpr Signal oneDown[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,L,S,S,L,S,L,S,L,S,STOP};
 static constexpr Signal stop[] =      {L,S,S,L,L,S,S,L,S,L,L,S,L,S,S,L,S,L,S,L,S,L,S,STOP};
+static constexpr Signal oneDown[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,L,S,S,L,S,L,S,L,S,STOP};
 static constexpr Signal oneUp[] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,L,L,S,S,STOP};
 static constexpr Signal twoDown[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,L,S,S,L,S,L,S,STOP};
 static constexpr Signal twoUp[] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,L,S,S,L,S,STOP};
