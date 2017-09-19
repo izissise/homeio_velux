@@ -20,7 +20,7 @@ Velux::Velux(TimerManager& tm, String const& telegramToken)
     buf[0] = _megaSignalStartValue + '0';
     buf[1] = '\0';
     _megaSignalStartValue = _megaSignalStartValue ? 0 : 1;
-    _server.send(200, F("text/plain"), buf);
+    _server.send(200, "text/plain", buf);
 
   });
   _server.on("/switch", [this]() {
@@ -28,10 +28,10 @@ Velux::Velux(TimerManager& tm, String const& telegramToken)
     buf[0] = _signal + '0';
     buf[1] = '\0';
     switchSignal();
-    _server.send(200, F("text/plain"), buf);
+    _server.send(200, "text/plain", buf);
 
   });
-  _server.onNotFound([this]() { _server.send(200, F("text/plain"), "Not found"); });
+  _server.onNotFound([this]() { _server.send(200, "text/plain", "Not found"); });
   _server.begin();
 
   tm.every(tickInus, [this]() {
@@ -96,7 +96,7 @@ void Velux::run() {
 }
 
 void Velux::_handleRoot() {
-  _server.send(200, F("text/plain"), "I'm up");
+  _server.send(200, "text/plain", "I'm up");
 }
 
 void Velux::_request() {
@@ -105,12 +105,12 @@ void Velux::_request() {
   Rotor r = (rotor == "M1") ? Rotor::M1 : (rotor == "M2") ? Rotor::M2 : (rotor == "M3") ? Rotor::M3 : Rotor::M3;
   Way w = (way == "UP") ? Way::UP : (way == "DOWN") ? Way::DOWN : (way == "STOP") ? Way::STOP : Way::STOP;
   if ((r == Rotor::M3 && rotor != "M3") || (w == Way::STOP && way != "STOP")) {
-    _server.send(409, F("text/plain"), "Error");
+    _server.send(409, "text/plain", "Error");
     return;
   }
   _data = s4624Proto(r, w);
   _needSend = true;
-  _server.send(200, F("text/plain"), "Ok");
+  _server.send(200, "text/plain", "Ok");
 }
 
 
@@ -131,28 +131,28 @@ void Velux::handleNewMessages(int numNewMessages) {
       _bot.sendMessage(chat_id, welcome, "Markdown");
       if (std::find(std::begin(_userChatIds), std::end(_userChatIds), chat_id) == std::end(_userChatIds))
         _userChatIds.push_back(chat_id);
-    } else if (text == F("/stop")) {
+    } else if (text == "/stop") {
       _data = s4624Proto(Rotor::M1, Way::STOP);
       _needSend = true;
-    } else if (text == F("/open")) {
+    } else if (text == "/open") {
       _data = s4624Proto(Rotor::M2, Way::DOWN);
       _needSend = true;
-    } else if (text == F("/close")) {
+    } else if (text == "/close") {
       _data = s4624Proto(Rotor::M2, Way::UP);
       _needSend = true;
-    } else if (text == F("/rain")) {
+    } else if (text == "/rain") {
       _data = s4624Proto(Rotor::M3, Way::UP);
       _needSend = true;
-    } else if (text == F("/sunny")) {
+    } else if (text == "/sunny") {
       _data = s4624Proto(Rotor::M3, Way::DOWN);
       _needSend = true;
-    } else if (text == F("/morelight")) {
+    } else if (text == "/morelight") {
       _data = s4624Proto(Rotor::M1, Way::UP);
       _needSend = true;
-    } else if (text == F("/lesslight")) {
+    } else if (text == "/lesslight") {
       _data = s4624Proto(Rotor::M1, Way::DOWN);
       _needSend = true;
-    } else if (text == F("/status")) {
+    } else if (text == "/status") {
       _bot.sendMessage(chat_id, "Just look at it to know", "");
     } else {
       _bot.sendMessage(chat_id, text, "");
