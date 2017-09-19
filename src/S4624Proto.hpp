@@ -3,22 +3,21 @@
 
 #include <cstdint>
 
-enum class Rotor {
+enum class Rotor : uint8_t {
   M1,
   M2,
   M3
 };
 
-enum class Way {
+enum class Way : uint8_t {
   UP,
   DOWN,
   STOP
 };
 
-enum class Signal {
+enum class Signal : bool {
   SHORT, //SHORT 0.44ms 220 ticks
-  LONG, //LONG  1.25ms 630 ticks
-  STOP
+  LONG //LONG  1.25ms 630 ticks
 };
 
 constexpr uint16_t tickDivider = 10;

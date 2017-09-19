@@ -2,11 +2,11 @@
 
 #include <Arduino.h>
 
-Velux::Velux(TimerManager& tm, std::string const& telegramToken)
-: _server(80), _bot(telegramToken.c_str(), _wifiClient) {
-  _data = nullptr;
+Velux::Velux(TimerManager& tm, String const& telegramToken)
+: _server(80), _bot(telegramToken, _wifiClient) {
   _sending = false;
-  _needSend = false;
+  _data = s4624Proto(Rotor::M1, Way::STOP);
+  _needSend = true;
   _megaSignalStartValue = signalStartValue;
   _signal = _megaSignalStartValue;
   _tickCount = 0;
@@ -38,9 +38,6 @@ Velux::Velux(TimerManager& tm, std::string const& telegramToken)
     handleSignal();
   });
 
-  _data = s4624Proto(Rotor::M1, Way::STOP);
-  _needSend = true;
-
   _userChatIds.push_back("87098341");
 }
 
@@ -52,7 +49,7 @@ void Velux::handleSignal() {
     }
     if (_needSend) {
       if (_signal == _megaSignalStartValue)
-        noInterrupts(); // Disable interrupt
+//         noInterrupts(); // Disable interrupt
 
       _pos = 0;
       _tickCount = 0;
@@ -65,7 +62,7 @@ void Velux::handleSignal() {
     if (_timeSent == 1) {
       _sending = false;
       _timeSent = 0;
-      interrupts(); // Enable interrupt
+//       interrupts(); // Enable interrupt
     } else {
       _pos = 0;
       _timeSent += 1;

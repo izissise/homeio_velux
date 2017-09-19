@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 
-#include <string>
 #include <memory>
 #include <functional>
 
@@ -13,16 +12,12 @@
 
 #include "TimerManager.hpp"
 
-#include "Ota.hpp"
-
 #include "IJob.hpp"
-
-#include "DeepSleep.hpp"
 
 class Esp {
 public:
-  Esp(std::string const& hostname, std::string const& ApSsid,
-      std::string const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob);
+  Esp(String const& hostname, String const& ApSsid,
+      String const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob);
   virtual ~Esp() = default;
 
   virtual void run(); // Call in loop()
@@ -35,7 +30,7 @@ public:
   void _newconfCallback();
 
 protected:
-  std::string _hostname;
+  String _hostname;
   bool _connected;
 
   TimerManager _timerManager;

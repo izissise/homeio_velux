@@ -4,8 +4,8 @@
 
 static Esp* gEsp = nullptr;
 
-Esp::Esp(std::string const& hostname, std::string const& ApSsid,
-         std::string const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob)
+Esp::Esp(String const& hostname, String const& ApSsid,
+         String const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob)
 : _hostname(hostname), _connected(false) {
   if (gEsp) {
     Serial.println("An Esp object have already been created -> reset");
