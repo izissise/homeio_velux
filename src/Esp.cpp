@@ -4,9 +4,8 @@
 
 static Esp* gEsp = nullptr;
 
-Esp::Esp(String const& hostname, String const& ApSsid,
-         String const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob)
-: _hostname(hostname), _connected(false) {
+Esp::Esp(String const& hostname, String const& ApSsid, String const& ApPass)
+: _hostname(hostname), _connected(false), _jobNumber(0) {
   if (gEsp) {
     Serial.println("An Esp object have already been created -> reset");
     ESP.reset();
@@ -26,21 +25,19 @@ Esp::Esp(String const& hostname, String const& ApSsid,
     return;
   }
   _connected = true;
-
-  MDNS.begin(_hostname.c_str());
   displayConnectionInfos();
-
-//   setupOta();
-  _timerManager.every(500000, []() {
-    Serial.print("."); // Blink using serial
-  }); // Blinking led
-  _job = std::move(createJob(_timerManager));
+  MDNS.begin(_hostname.c_str());
 }
 
 void Esp::run() {
-  _timerManager.update();
-  _job->run();
-//   handleOta();
+  for (unsigned int i = 0; i < _jobNumber; ++i) {
+    _jobs[i]->run();
+  }
+}
+
+void Esp::addJob(std::shared_ptr<IJob> job) {
+  _jobs[_jobNumber] = job;
+  _jobNumber += 1;
 }
 
 void Esp::displayConnectionInfos() const {
@@ -51,7 +48,6 @@ void Esp::displayConnectionInfos() const {
   Serial.println("SSID: " + WiFi.SSID());
   Serial.println("MAC: " + WiFi.macAddress());
 }
-
 
 void Esp::_apCallback() {
   Serial.print("Entered config mode with SSID: ");

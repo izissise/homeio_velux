@@ -4,12 +4,13 @@
 #include <cstdint>
 #include <functional>
 
-constexpr static uint32_t nowMaxValue = 0xffffffff;
-constexpr static int8_t maxNumberOfEvents = 4;
+#include "IJob.hpp"
 
-class TimerManager {
+constexpr uint32_t nowMaxValue = 0xffffffff;
+constexpr int8_t maxNumberOfEvents = 4;
+
+class TimerManager : public IJob {
 public:
-
   TimerManager();
   ~TimerManager() = default;
 
@@ -19,6 +20,8 @@ public:
 
   void update();
   void update(uint32_t now);
+
+  void run() override;
 
 public:
   struct timer {

@@ -14,13 +14,16 @@
 
 #include "IJob.hpp"
 
+constexpr size_t maxNumberOfJob = 5;
+
 class Esp {
 public:
-  Esp(String const& hostname, String const& ApSsid,
-      String const& ApPass, std::function<std::unique_ptr<IJob>(TimerManager&)> createJob);
+  Esp(String const& hostname, String const& ApSsid, String const& ApPass);
   virtual ~Esp() = default;
 
   virtual void run(); // Call in loop()
+
+  void addJob(std::shared_ptr<IJob> job);
 
   bool isConnected() const { return _connected; };
 
@@ -30,12 +33,12 @@ public:
   void _newconfCallback();
 
 protected:
-  String _hostname;
-  bool _connected;
+  String   _hostname;
+  bool     _connected;
+  unsigned int _jobNumber;
 
-  TimerManager _timerManager;
-  std::unique_ptr<IJob> _job;
   WiFiManager _wifiManager;
+  std::shared_ptr<IJob> _jobs[maxNumberOfJob];
 };
 
 #endif

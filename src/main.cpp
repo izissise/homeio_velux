@@ -3,6 +3,7 @@
 #include "Esp.hpp"
 
 #include "Velux.hpp"
+#include "TimerManager.hpp"
 
 #include <memory>
 
@@ -10,6 +11,7 @@
 #define HOSTNAME "velux"
 #define WIFIAPSSID "velux"
 #define WIFIAPPASS "esp8266wifi"
+#define TELEGRAMBOTTOKEN ""
 
 std::unique_ptr<Esp> esp;
 
@@ -26,14 +28,22 @@ void setup() {
   Serial.println(F("Starting ESP8266"));
   Serial.println(ESP.getResetInfo());
 
-  esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS, [](TimerManager& tm) {
-    return std::unique_ptr<IJob>(new Velux(tm, TELEGRAMBOTTOKEN));
-  }));
+  esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS));
   if (!esp) {
     Serial.println(F("Error starting bye"));
     ESP.reset();
   }
-  Serial.println(F("Setup done!"));
+  Serial.println(F("Connected!"));
+
+  auto tm = std::make_shared<TimerManager>();
+  auto velux = std::make_shared<Velux>(*tm, TELEGRAMBOTTOKEN);
+
+  esp->addJob(std::static_pointer_cast<IJob>(tm));
+  esp->addJob(std::static_pointer_cast<IJob>(velux));
+
+  tm->every(500000, []() { // Show that's alive
+    Serial.print("."); // Blink using serial
+  });
 }
 
 void loop() {

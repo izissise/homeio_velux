@@ -31,6 +31,10 @@ void TimerManager::update() {
   update(micros());
 }
 
+void TimerManager::run() {
+  update();
+}
+
 void TimerManager::update(uint32_t now) {
   if (now < _nAt)
     return;
