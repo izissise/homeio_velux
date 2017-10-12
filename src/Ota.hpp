@@ -1,31 +1,24 @@
 #ifndef _OTA_HPP_
 #define _OTA_HPP_
 
-#include <functional>
-
-#include <ESP8266mDNS.h>
-#include <ArduinoOTA.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
 
 #include "IJob.hpp"
 
 class Ota : public IJob {
 public:
-  Ota(String hostname, uint16_t port, String password, std::function<void()> onStart = nullptr, std::function<void(ota_error_t)> onError = nullptr, std::function<void(unsigned int, unsigned int)> onProgress = nullptr, std::function<void()> onEnd = nullptr);
+  Ota(ESP8266WebServer& svr, String username, String password, String updatePath = "/update");
   virtual ~Ota() = default;
 
   void run() override;
 
-public:
-  void _startCb();
-  void _errorCb(ota_error_t err);
-  void _progressCb(unsigned int progress, unsigned int total);
-  void _endCb();
-
 private:
-  std::function<void()> _onStart;
-  std::function<void(ota_error_t)> _onError;
-  std::function<void(unsigned int, unsigned int)> _onProgress;
-  std::function<void()> _onEnd;
+  String _username;
+  String _password;
+  String _path;
+
+  ESP8266HTTPUpdateServer _httpUpdater;
 };
 
 #endif
