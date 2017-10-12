@@ -1,9 +1,7 @@
 #include "Velux.hpp"
 
-#include <Arduino.h>
-
-Velux::Velux(TimerManager& tm, String const& telegramToken)
-: _server(80), _bot(telegramToken, _wifiClient) {
+Velux::Velux(ESP8266WebServer& svr, TimerManager& tm, String const& telegramToken)
+: _bot(telegramToken, _wifiClient) {
   _sending = false;
   _data = s4624Proto(Rotor::M1, Way::STOP);
   _needSend = true;
@@ -13,26 +11,22 @@ Velux::Velux(TimerManager& tm, String const& telegramToken)
   _timeSent = 0;
   pinMode(dataPin, OUTPUT);
   switchSignal();
-  _server.on("/", [this]() { _handleRoot(); });
-  _server.on("/velux", [this]() { _request(); });
-  _server.on("/megaswitch", [this]() {
+  svr.on("/", [this, &svr]() { _handleRoot(svr); });
+  svr.on("/velux", [this, &svr]() { _request(svr); });
+  svr.on("/megaswitch", [this, &svr]() {
     char buf[2];
     buf[0] = _megaSignalStartValue + '0';
     buf[1] = '\0';
     _megaSignalStartValue = _megaSignalStartValue ? 0 : 1;
-    _server.send(200, "text/plain", buf);
-
+    svr.send(200, "text/plain", buf);
   });
-  _server.on("/switch", [this]() {
+  svr.on("/switch", [this, &svr]() {
     char buf[2];
     buf[0] = _signal + '0';
     buf[1] = '\0';
     switchSignal();
-    _server.send(200, "text/plain", buf);
-
+    svr.send(200, "text/plain", buf);
   });
-  _server.onNotFound([this]() { _server.send(200, "text/plain", "Not found"); });
-  _server.begin();
 
   tm.every(tickInus, [this]() {
     handleSignal();
@@ -82,8 +76,6 @@ void Velux::switchSignal() {
 
 void Velux::run() {
   if (_sending == false) {
-    _server.handleClient();
-
     if (millis() > static_cast<size_t>(_Bot_lasttime + botMtbs))  {
       int numNewMessages = 0;
       while ((numNewMessages = _bot.getUpdates(_bot.last_message_received + 1)) > 0) {
@@ -94,22 +86,22 @@ void Velux::run() {
   }
 }
 
-void Velux::_handleRoot() {
-  _server.send(200, "text/plain", "I'm up");
+void Velux::_handleRoot(ESP8266WebServer& svr) {
+  svr.send(200, "text/plain", "I'm up");
 }
 
-void Velux::_request() {
-  auto rotor = _server.arg("rotor");
-  auto way = _server.arg("way");
+void Velux::_request(ESP8266WebServer& svr) {
+  auto rotor = svr.arg("rotor");
+  auto way = svr.arg("way");
   Rotor r = (rotor == "M1") ? Rotor::M1 : (rotor == "M2") ? Rotor::M2 : (rotor == "M3") ? Rotor::M3 : Rotor::M3;
   Way w = (way == "UP") ? Way::UP : (way == "DOWN") ? Way::DOWN : (way == "STOP") ? Way::STOP : Way::STOP;
   if ((r == Rotor::M3 && rotor != "M3") || (w == Way::STOP && way != "STOP")) {
-    _server.send(409, "text/plain", "Error");
+    svr.send(409, "text/plain", "Error");
     return;
   }
   _data = s4624Proto(r, w);
   _needSend = true;
-  _server.send(200, "text/plain", "Ok");
+  svr.send(200, "text/plain", "Ok");
 }
 
 
