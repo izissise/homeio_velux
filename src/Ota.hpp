@@ -10,7 +10,7 @@
 
 class Ota : public IJob {
 public:
-  Ota(std::function<void()> onStart = nullptr, std::function<void(ota_error_t)> onError = nullptr, std::function<void(unsigned int, unsigned int)> onProgress = nullptr, std::function<void()> onEnd = nullptr);
+  Ota(String hostname, uint16_t port, String password, std::function<void()> onStart = nullptr, std::function<void(ota_error_t)> onError = nullptr, std::function<void(unsigned int, unsigned int)> onProgress = nullptr, std::function<void()> onEnd = nullptr);
   virtual ~Ota() = default;
 
   void run() override;

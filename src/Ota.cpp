@@ -2,13 +2,18 @@
 
 static Ota* gOta = nullptr;
 
-Ota::Ota(std::function<void()> onStart, std::function<void(ota_error_t)> onError, std::function<void(unsigned int, unsigned int)> onProgress, std::function<void()> onEnd)
+Ota::Ota(String hostname, uint16_t port, String password, std::function<void()> onStart, std::function<void(ota_error_t)> onError, std::function<void(unsigned int, unsigned int)> onProgress, std::function<void()> onEnd)
 : _onStart(onStart), _onError(onError), _onProgress(onProgress), _onEnd(onEnd) {
   if (gOta) {
     Serial.println("An OTA object have already been created -> reset");
     ESP.reset();
   }
   gOta = this;
+
+  ArduinoOTA.setPort(port);
+  ArduinoOTA.setHostname(hostname);
+  ArduinoOTA.setPassword(password);
+
   ArduinoOTA.onStart([]() { gOta->_startCb(); });
   ArduinoOTA.onError([](ota_error_t err) { gOta->_errorCb(err); });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) { gOta->_progressCb(progress, total); });

@@ -38,7 +38,7 @@ void setup() {
 
   auto tm = std::make_shared<TimerManager>();
   auto velux = std::make_shared<Velux>(*tm, TELEGRAMBOTTOKEN);
-  auto ota = std::make_shared<Ota>();
+  auto ota = std::make_shared<Ota>(HOSTNAME, 8266, WIFIAPPASS);
 
   esp->addJob(std::static_pointer_cast<IJob>(tm));
   esp->addJob(std::static_pointer_cast<IJob>(velux));
