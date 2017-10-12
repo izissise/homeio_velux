@@ -25,7 +25,7 @@ constexpr uint8_t signalStartValue = 0;
 class Velux : public IJob {
 public:
   Velux(TimerManager& tm, String const& telegramToken);
-  ~Velux() = default;
+  virtual ~Velux() = default;
 
   void run() override;
 

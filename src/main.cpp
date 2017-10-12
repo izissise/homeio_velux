@@ -2,8 +2,9 @@
 
 #include "Esp.hpp"
 
-#include "Velux.hpp"
 #include "TimerManager.hpp"
+#include "Ota.hpp"
+#include "Velux.hpp"
 
 #include <memory>
 
@@ -37,9 +38,11 @@ void setup() {
 
   auto tm = std::make_shared<TimerManager>();
   auto velux = std::make_shared<Velux>(*tm, TELEGRAMBOTTOKEN);
+  auto ota = std::make_shared<Ota>();
 
   esp->addJob(std::static_pointer_cast<IJob>(tm));
   esp->addJob(std::static_pointer_cast<IJob>(velux));
+  esp->addJob(std::static_pointer_cast<IJob>(ota));
 
   tm->every(500000, []() { // Show that's alive
     Serial.print("."); // Blink using serial

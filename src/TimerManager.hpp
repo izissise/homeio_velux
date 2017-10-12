@@ -12,7 +12,7 @@ constexpr int8_t maxNumberOfEvents = 4;
 class TimerManager : public IJob {
 public:
   TimerManager();
-  ~TimerManager() = default;
+  virtual ~TimerManager() = default;
 
   void every(uint32_t period, std::function<void()> callback);
   void every(uint32_t period, std::function<void()> callback, int16_t repeatCount);
