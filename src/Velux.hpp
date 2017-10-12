@@ -32,7 +32,7 @@ public:
   void handleSignal();
 
 private:
-  void switchSignal();
+  inline void switchSignal();
 
   void _handleRoot();
   void _request();

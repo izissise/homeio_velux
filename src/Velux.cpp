@@ -85,10 +85,9 @@ void Velux::run() {
     _server.handleClient();
 
     if (millis() > static_cast<size_t>(_Bot_lasttime + botMtbs))  {
-      int numNewMessages = _bot.getUpdates(_bot.last_message_received + 1);
-      while(numNewMessages) {
+      int numNewMessages = 0;
+      while ((numNewMessages = _bot.getUpdates(_bot.last_message_received + 1)) > 0) {
         handleNewMessages(numNewMessages);
-        numNewMessages = _bot.getUpdates(_bot.last_message_received + 1);
       }
       _Bot_lasttime = millis();
     }

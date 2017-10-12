@@ -3,30 +3,28 @@
 constexpr Signal L = Signal::LONG;
 constexpr Signal S = Signal::SHORT;
 
-constexpr std::size_t commandSize = 23;
+constexpr std::size_t cmdSize = 23;
 
-static constexpr Signal stop[] =      {L,S,S,L,L,S,S,L,S,L,L,S,L,S,S,L,S,L,S,L,S,L,S};
-static constexpr Signal oneDown[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,L,S,S,L,S,L,S,L,S};
-static constexpr Signal oneUp[] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,L,L,S,S};
-static constexpr Signal twoDown[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,L,S,S,L,S,L,S};
-static constexpr Signal twoUp[] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,L,S,S,L,S};
-static constexpr Signal threeDown[] = {L,S,S,L,L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S};
-static constexpr Signal threeUp[] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,L,S,L,L};
+static constexpr Signal stop[cmdSize] =      {L,S,S,L,L,S,S,L,S,L,L,S,L,S,S,L,S,L,S,L,S,L,S};
+static constexpr Signal oneDown[cmdSize] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,L,S,S,L,S,L,S,L,S};
+static constexpr Signal oneUp[cmdSize] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,L,L,S,S};
+static constexpr Signal twoDown[cmdSize] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,L,S,S,L,S,L,S};
+static constexpr Signal twoUp[cmdSize] =     {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,L,S,S,L,S};
+static constexpr Signal threeDown[cmdSize] = {L,S,S,L,L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S};
+static constexpr Signal threeUp[cmdSize] =   {L,S,S,L,L,S,S,L,L,S,S,L,S,L,S,L,S,L,S,L,S,L,L};
 
 static uint16_t actionBuffer[32] = {0};
 
 void actionToBuffer(const Signal* actions) {
-  int j = 0;
+  unsigned int i = 0;
   int timing = 100;
-  actionBuffer[j] = timing;
-  j += 1;
-  for (unsigned int i = 0; i < commandSize; ++i) {
+  actionBuffer[0] = timing;
+  for (i = 0; i < cmdSize; ++i) {
     uint16_t value = (actions[i] == L) ? nbTickLong : nbTickShort;
     timing += value;
-    actionBuffer[j] = timing;
-    j += 1;
+    actionBuffer[i + 1] = timing;
   }
-  actionBuffer[j] = 0;
+  actionBuffer[i + 1] = 0;
 }
 
 const uint16_t* s4624Proto(Rotor r, Way w) {
