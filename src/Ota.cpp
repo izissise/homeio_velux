@@ -11,8 +11,8 @@ Ota::Ota(String hostname, uint16_t port, String password, std::function<void()> 
   gOta = this;
 
   ArduinoOTA.setPort(port);
-  ArduinoOTA.setHostname(hostname);
-  ArduinoOTA.setPassword(password);
+  ArduinoOTA.setHostname(hostname.c_str());
+  ArduinoOTA.setPassword(password.c_str());
 
   ArduinoOTA.onStart([]() { gOta->_startCb(); });
   ArduinoOTA.onError([](ota_error_t err) { gOta->_errorCb(err); });

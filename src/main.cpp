@@ -30,19 +30,15 @@ void setup() {
   Serial.println(ESP.getResetInfo());
 
   esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS));
-  if (!esp) {
-    Serial.println(F("Error starting bye"));
-    ESP.reset();
-  }
   Serial.println(F("Connected!"));
 
   auto tm = std::make_shared<TimerManager>();
-  auto velux = std::make_shared<Velux>(*tm, TELEGRAMBOTTOKEN);
   auto ota = std::make_shared<Ota>(HOSTNAME, 8266, WIFIAPPASS);
+  auto velux = std::make_shared<Velux>(*tm, TELEGRAMBOTTOKEN);
 
   esp->addJob(std::static_pointer_cast<IJob>(tm));
-  esp->addJob(std::static_pointer_cast<IJob>(velux));
   esp->addJob(std::static_pointer_cast<IJob>(ota));
+  esp->addJob(std::static_pointer_cast<IJob>(velux));
 
   tm->every(500000, []() { // Show that's alive
     Serial.print("."); // Blink using serial
