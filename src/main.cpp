@@ -46,7 +46,7 @@ void setup() {
 
   wsvr->begin();
 
-  tm->every(500000, []() { // Show that's alive
+  tm->every(500000, []() { // Show that it is alive
     Serial.print("."); // Blink using serial
   });
 }
