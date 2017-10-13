@@ -5,6 +5,7 @@
 #include "TimerManager.hpp"
 #include "WebServer.hpp"
 #include "WSServer.hpp"
+#include "WebSocketSerialConsole.hpp"
 #include "Ota.hpp"
 #include "Velux.hpp"
 
@@ -36,13 +37,15 @@ void setup() {
 
   auto tm = std::make_shared<TimerManager>();
   auto wsvr = std::make_shared<WebServer>();
-//   auto wss = std::make_shared<WSServer>(81);
+  auto wss = std::make_shared<WSServer>(81);
+  auto wsserial = std::make_shared<WSSerialConsole>(*wsvr, *wss);
   auto ota = std::make_shared<Ota>(*wsvr, WIFIAPSSID, WIFIAPPASS);
   auto velux = std::make_shared<Velux>(*wsvr, *tm, TELEGRAMBOTTOKEN);
 
   esp->addJob(std::static_pointer_cast<IJob>(tm));
   esp->addJob(std::static_pointer_cast<IJob>(wsvr));
-//   esp->addJob(std::static_pointer_cast<IJob>(wss));
+  esp->addJob(std::static_pointer_cast<IJob>(wss));
+  esp->addJob(std::static_pointer_cast<IJob>(wsserial));
   esp->addJob(std::static_pointer_cast<IJob>(ota));
   esp->addJob(std::static_pointer_cast<IJob>(velux));
 
