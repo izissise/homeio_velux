@@ -13,8 +13,6 @@
 
 #include "S4624Proto.hpp"
 
-constexpr int8_t dataPin = 2;
-
 constexpr uint16_t backupSignalStartTick = 2010;
 constexpr uint16_t timeoutLastCheckTick = 7168;
 
@@ -24,7 +22,7 @@ constexpr uint8_t signalStartValue = 0;
 
 class Velux : public IJob {
 public:
-  Velux(WebServer& svr, TimerManager& tm, String const& telegramToken);
+  Velux(WebServer& svr, TimerManager& tm, String const& telegramToken, int gpioPin = 2);
   virtual ~Velux() = default;
 
   void run() override;
@@ -44,6 +42,7 @@ private:
   UniversalTelegramBot _bot;
 
 private:
+  int8_t _gpioPin;
   uint8_t _signal; // Electric signal value
   uint8_t _megaSignalStartValue;
   uint16_t _timeSent;

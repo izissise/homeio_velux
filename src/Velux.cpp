@@ -1,7 +1,7 @@
 #include "Velux.hpp"
 
-Velux::Velux(WebServer& svr, TimerManager& tm, String const& telegramToken)
-: _bot(telegramToken, _wifiClient) {
+Velux::Velux(WebServer& svr, TimerManager& tm, String const& telegramToken, int gpioPin)
+: _bot(telegramToken, _wifiClient), _gpioPin(gpioPin) {
   _sending = false;
   _data = s4624Proto(Rotor::M1, Way::STOP);
   _needSend = true;
@@ -9,7 +9,7 @@ Velux::Velux(WebServer& svr, TimerManager& tm, String const& telegramToken)
   _signal = _megaSignalStartValue;
   _tickCount = 0;
   _timeSent = 0;
-  pinMode(dataPin, OUTPUT);
+  pinMode(_gpioPin, OUTPUT);
   switchSignal();
   svr.on("/", [this, &svr]() { _handleRoot(svr); });
   svr.on("/velux", [this, &svr]() { _request(svr); });
@@ -71,7 +71,7 @@ void Velux::handleSignal() {
 
 void Velux::switchSignal() {
   _signal = _signal ? 0 : 1;
-  digitalWrite(dataPin, _signal);
+  digitalWrite(_gpioPin, _signal);
 }
 
 void Velux::run() {
