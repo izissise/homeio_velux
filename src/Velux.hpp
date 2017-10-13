@@ -5,13 +5,11 @@
 #include <algorithm>
 
 #include <Arduino.h>
-
-#include <ESP8266WebServer.h>
-
 #include <UniversalTelegramBot.h>
 
 #include "IJob.hpp"
 #include "TimerManager.hpp"
+#include "WebServer.hpp"
 
 #include "S4624Proto.hpp"
 
@@ -26,7 +24,7 @@ constexpr uint8_t signalStartValue = 0;
 
 class Velux : public IJob {
 public:
-  Velux(ESP8266WebServer& svr, TimerManager& tm, String const& telegramToken);
+  Velux(WebServer& svr, TimerManager& tm, String const& telegramToken);
   virtual ~Velux() = default;
 
   void run() override;
@@ -36,8 +34,8 @@ public:
 private:
   inline void switchSignal();
 
-  void _handleRoot(ESP8266WebServer& svr);
-  void _request(ESP8266WebServer& svr);
+  void _handleRoot(WebServer& svr);
+  void _request(WebServer& svr);
 
   void handleNewMessages(int numNewMessages);
 

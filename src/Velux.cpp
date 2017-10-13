@@ -1,6 +1,6 @@
 #include "Velux.hpp"
 
-Velux::Velux(ESP8266WebServer& svr, TimerManager& tm, String const& telegramToken)
+Velux::Velux(WebServer& svr, TimerManager& tm, String const& telegramToken)
 : _bot(telegramToken, _wifiClient) {
   _sending = false;
   _data = s4624Proto(Rotor::M1, Way::STOP);
@@ -86,11 +86,11 @@ void Velux::run() {
   }
 }
 
-void Velux::_handleRoot(ESP8266WebServer& svr) {
+void Velux::_handleRoot(WebServer& svr) {
   svr.send(200, "text/plain", "I'm up");
 }
 
-void Velux::_request(ESP8266WebServer& svr) {
+void Velux::_request(WebServer& svr) {
   auto rotor = svr.arg("rotor");
   auto way = svr.arg("way");
   Rotor r = (rotor == "M1") ? Rotor::M1 : (rotor == "M2") ? Rotor::M2 : (rotor == "M3") ? Rotor::M3 : Rotor::M3;

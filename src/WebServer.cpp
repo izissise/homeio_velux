@@ -1,9 +1,11 @@
 #include "WebServer.hpp"
 
-WebServer::WebServer() {
-  this->onNotFound([this]() { this->send(200, "text/plain", "Not found"); });
+WebServer::WebServer(uint16_t port)
+: ESP8266WebServer(port) {
+  this->onNotFound([this]() { this->send(404, "text/plain", "Not found"); });
 
-  MDNS.addService("http", "tcp", 80);
+  this->begin();
+  MDNS.addService("http", "tcp", port);
 }
 
 void WebServer::run() {
