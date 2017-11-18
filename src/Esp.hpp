@@ -14,7 +14,7 @@
 
 #include "IJob.hpp"
 
-constexpr size_t maxNumberOfJob = 8;
+constexpr size_t maxNumberOfJob = 10;
 
 class Esp {
 public:
