@@ -102,7 +102,8 @@ void Velux::_handleNewMessages(UniversalTelegramBot& bot, int numNewMessages) {
     String chat_id = String(bot.messages[i].chat_id);
     String text = bot.messages[i].text;
     if (text == F("/start")) {
-      String welcome = "Hello, you can now control the velux.\n";
+      String welcome = F("Hello, you can now control the velux.\n");
+      String keyboard = F("[[\"/open\",\"/close\"],[\"/rain\",\"/sunny\"],[\"/morelight\",\"/lesslight\"],[\"/stop\",\"/status\"]]");
       welcome += "/stop : To stop anything happening\n";
       welcome += "/open : To open the velux\n";
       welcome += "/close : To close the velux\n";
@@ -111,7 +112,7 @@ void Velux::_handleNewMessages(UniversalTelegramBot& bot, int numNewMessages) {
       welcome += "/morelight : To open the sun protector\n";
       welcome += "/lesslight : To close the sun protector\n";
       welcome += "/status : To get a status\n";
-      bot.sendMessage(chat_id, welcome, "Markdown");
+      bot.sendMessageWithReplyKeyboard(chat_id, welcome, "Markdown", keyboard, true);
     } else if (text == "/stop") {
       _data = s4624Proto(Rotor::M1, Way::STOP);
       _needSend = true;
