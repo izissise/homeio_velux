@@ -2,11 +2,12 @@
 
 #include <Arduino.h>
 
-TimerManager::TimerManager() {
-  _nAt = 0;
-  for (uint8_t i = 0; i < maxNumberOfEvents; ++i) {
-    _events[i].repeatCount = 0;
-  }
+Timer every(uint32_t period, std::function<void()> callback, int16_t repeatCount) {
+  return {period, repeatCount, micros(), callback};
+}
+
+TimerManager::TimerManager()
+: _nAt(0) {
 }
 
 void TimerManager::every(uint32_t period, std::function<void()> callback, int16_t repeatCount){

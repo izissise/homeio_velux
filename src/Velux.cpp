@@ -77,6 +77,7 @@ void Velux::switchSignal() {
 }
 
 void Velux::run() {
+  handleSignal();
 }
 
 void Velux::_handleRoot(WebServer& svr) {
