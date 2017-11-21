@@ -34,12 +34,12 @@ void setup() {
   esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS));
   Serial.println(F("Connected!"));
 
-  Serial.print(F("  Entering Ota grace period\r"));
+  Serial.print(F("Entering Ota grace period\r"));
   auto tm = std::make_shared<TimerManager>();
   auto wsvr = std::make_shared<WebServer>();
   auto ota = std::make_shared<Ota>(*wsvr, WIFIAPSSID, WIFIAPPASS);
-  //   auto wss = std::make_shared<WSServer>(81);
-  //   auto wsserial = std::make_shared<WSSerialConsole>(*wsvr, *wss);
+//   auto wss = std::make_shared<WSServer>(81);
+//   auto wsserial = std::make_shared<WSSerialConsole>(*wsvr, *wss);
   auto telegramBot = std::make_shared<TelegramBot>(*tm, TELEGRAMBOTTOKEN);
   auto velux = std::make_shared<Velux>(*wsvr, *tm, *telegramBot, 14);
 
@@ -49,11 +49,11 @@ void setup() {
 
   esp->tcpCleanup(); // Cleanup tcp sockets
   tm->after(15000000, [telegramBot, velux]() {
-  //   esp->addJob(std::static_pointer_cast<IJob>(wss));
-  //   esp->addJob(std::static_pointer_cast<IJob>(wsserial));
+//     esp->addJob(std::static_pointer_cast<IJob>(wss));
+//     esp->addJob(std::static_pointer_cast<IJob>(wsserial));
     esp->addJob(std::static_pointer_cast<IJob>(telegramBot));
     esp->addJob(std::static_pointer_cast<IJob>(velux));
-    Serial.println(F("\rSetup done"));
+    Serial.println(F("\rSetup done!               "));
   });
 
   tm->every(500000, []() { // Show that it is alive
