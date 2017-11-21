@@ -7,7 +7,7 @@ static Esp* gEsp = nullptr;
 Esp::Esp(String const& hostname, String const& ApSsid, String const& ApPass)
 : _hostname(hostname), _connected(false), _jobNumber(0) {
   if (gEsp) {
-    Serial.println("An Esp object have already been created -> reset");
+    Serial.println("Dev error -> reset");
     ESP.reset();
   }
   gEsp = this;
@@ -16,7 +16,7 @@ Esp::Esp(String const& hostname, String const& ApSsid, String const& ApPass)
   _wifiManager.setConfigPortalTimeout(3600); //sets timeout until configuration portal gets turned off in seconds
   _wifiManager.setAPCallback([] (WiFiManager*) { gEsp->_apCallback(); });
   _wifiManager.setSaveConfigCallback([] () { gEsp->_newconfCallback(); });
-  Serial.println("Waiting wifi...");
+  Serial.println(F("Waiting wifi..."));
   if (!_wifiManager.autoConnect(ApSsid.c_str(), ApPass.c_str())) {
     Serial.println("Failed to connect and hit timeout");
     delay(3000);
@@ -57,3 +57,12 @@ void Esp::_apCallback() {
 void Esp::_newconfCallback() {
   Serial.println("------- New wifi config ----------");
 }
+
+// https://github.com/esp8266/Arduino/issues/1923
+void Esp::tcpCleanup()
+{
+  while(tcp_tw_pcbs != nullptr) {
+    tcp_abort(tcp_tw_pcbs);
+  }
+}
+

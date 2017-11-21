@@ -1,7 +1,9 @@
 #ifndef _ESP_HPP_
 #define _ESP_HPP_
 
+
 #include <Arduino.h>
+#include <lwip/tcp_impl.h> // do this before including other stuff like wificlient.h
 
 #include <memory>
 #include <functional>
@@ -31,6 +33,8 @@ public:
 
   void _apCallback();
   void _newconfCallback();
+
+  void tcpCleanup();
 
 protected:
   String   _hostname;
