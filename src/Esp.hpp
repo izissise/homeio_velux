@@ -12,7 +12,7 @@
 #include <WiFiManager.h>
 #include <ESP8266mDNS.h>
 
-#include "TimerManager.hpp"
+#include "Timer.hpp"
 
 #include "IJob.hpp"
 

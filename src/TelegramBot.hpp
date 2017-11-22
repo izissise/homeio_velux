@@ -8,7 +8,7 @@
 #include <UniversalTelegramBot.h>
 
 #include "IJob.hpp"
-#include "TimerManager.hpp"
+#include "Timer.hpp"
 
 constexpr uint16_t botMtbs = 500; //mean time between scan messages
 
