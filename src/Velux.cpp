@@ -73,8 +73,12 @@ void Velux::switchSignal() {
 }
 
 void Velux::run() {
-  if (_ticker.update(micros())) {
+  if (_ticker.update()) {
     handleSignal();
+    while (_sending) {
+      if (_ticker.waitNextUpdate())
+        handleSignal();
+    }
   }
 }
 

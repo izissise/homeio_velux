@@ -50,6 +50,14 @@ bool Timer::update() {
   return update(micros());
 }
 
+bool Timer::waitNextUpdate() {
+  if (_period == 0)
+    return false;
+  //TODO use delay() if more than 1ms
+  while (!update()) {}
+  return true;
+}
+
 
 TimerManager::TimerManager()
 : _nAt(0) {
