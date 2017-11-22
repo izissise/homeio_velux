@@ -53,7 +53,7 @@ void setup() {
 //     esp->addJob(wsserial);
     esp->addJob(telegramBot);
     esp->addJob(velux);
-    Serial.println(F("\rSetup done!               "));
+    Serial.println(F("\rSetup done!                    "));
   });
 }
 

@@ -14,7 +14,7 @@ constexpr int8_t maxNumberOfEvents = 2;
 class Timer {
 public:
   Timer() = default;
-  explicit Timer(uint32_t period, int16_t repeatCount = -1);
+  explicit Timer(uint32_t period, int16_t repeatCount = 1);
 
   ~Timer() = default;
 
