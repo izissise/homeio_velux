@@ -44,15 +44,15 @@ void setup() {
   auto telegramBot = std::make_shared<TelegramBot>(TELEGRAMBOTTOKEN);
   auto velux = std::make_shared<Velux>(*wsvr, *telegramBot, 14);
 
-  esp->addJob(std::static_pointer_cast<IJob>(tm));
-  esp->addJob(std::static_pointer_cast<IJob>(wsvr));
-  esp->addJob(std::static_pointer_cast<IJob>(ota));
+  esp->addJob(tm);
+  esp->addJob(wsvr);
+  esp->addJob(ota);
 
   tm->attachTimer(Timer::Timer{15000000}, [telegramBot, velux]() {
-//     esp->addJob(std::static_pointer_cast<IJob>(wss));
-//     esp->addJob(std::static_pointer_cast<IJob>(wsserial));
-    esp->addJob(std::static_pointer_cast<IJob>(telegramBot));
-    esp->addJob(std::static_pointer_cast<IJob>(velux));
+//     esp->addJob(wss);
+//     esp->addJob(wsserial);
+    esp->addJob(telegramBot);
+    esp->addJob(velux);
     Serial.println(F("\rSetup done!               "));
   });
 }

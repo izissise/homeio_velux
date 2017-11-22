@@ -35,11 +35,6 @@ void Esp::run() {
   }
 }
 
-void Esp::addJob(std::shared_ptr<IJob> job) {
-  _jobs[_jobNumber] = job;
-  _jobNumber += 1;
-}
-
 void Esp::displayConnectionInfos() const {
   char szRet[16];
   auto address = WiFi.localIP();

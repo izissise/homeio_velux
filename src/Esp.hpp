@@ -25,7 +25,11 @@ public:
 
   virtual void run(); // Call in loop()
 
-  void addJob(std::shared_ptr<IJob> job);
+  template<class JOBTYPE>
+  void addJob(std::shared_ptr<JOBTYPE> const& job) {
+    _jobs[_jobNumber] = std::static_pointer_cast<IJob>(job);
+    _jobNumber += 1;
+  }
 
   bool isConnected() const { return _connected; };
 
