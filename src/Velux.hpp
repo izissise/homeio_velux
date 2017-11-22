@@ -20,7 +20,7 @@ constexpr uint8_t signalStartValue = 0;
 
 class Velux : public IJob {
 public:
-  Velux(WebServer& svr, TimerManager& tm, TelegramBot& tBot, int gpioPin = 2);
+  Velux(WebServer& svr, TelegramBot& tBot, int gpioPin = 2);
   virtual ~Velux() = default;
 
   void run() override;
@@ -35,6 +35,7 @@ private:
   void _handleNewMessages(UniversalTelegramBot& bot, int numNewMessages);
 
 private:
+  Timer::Timer _ticker;
   int8_t _gpioPin;
   uint8_t _signal; // Electric signal value
   uint8_t _megaSignalStartValue;

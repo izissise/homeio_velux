@@ -2,31 +2,64 @@
 
 #include <Arduino.h>
 
-Timer every(uint32_t period, std::function<void()> callback, int16_t repeatCount) {
-  return {period, repeatCount, micros(), callback};
+namespace Timer {
+
+Timer every(uint32_t period, int16_t repeatCount) {
+  return Timer{period, repeatCount};
 }
+
+Timer every(uint32_t period) {
+  return every(period, -1);
+}
+
+Timer after(uint32_t duration) {
+  return every(duration, 1);
+}
+
+Timer::Timer(uint32_t period, int16_t repeatCount)
+: _period(period), _lastTime(micros()), _repeatCount(repeatCount) {
+}
+
+bool Timer::update(uint32_t now) {
+  bool needTrigger = false;
+  if (_repeatCount != 0) { // Event is setup
+    uint32_t at;
+    if (_lastTime >= (nowMaxValue - _period)) { // would overflow
+      at = _lastTime - (nowMaxValue / 2);
+      at += _period;
+      if (at <= (now - (nowMaxValue / 2))) { // Need trigger
+        needTrigger = true;
+      }
+    } else {
+      at = _lastTime + _period;
+      if (at <= now) { // Need trigger
+        needTrigger = true;
+      }
+    }
+    if (needTrigger) { // Setup for next trigger
+      _lastTime = now;
+      if (_repeatCount > 0) {
+        _repeatCount -= 1;
+      }
+    }
+  }
+  return needTrigger;
+}
+
+bool Timer::update() {
+  return update(micros());
+}
+
 
 TimerManager::TimerManager()
 : _nAt(0) {
 }
 
-void TimerManager::every(uint32_t period, std::function<void()> callback, int16_t repeatCount){
+void TimerManager::attachTimer(Timer timer, std::function<void()> callback) {
   const int8_t idx = findFreeEventIndex();
-  _events[idx].period = period;
-  _events[idx].repeatCount = repeatCount;
-  _events[idx].lastTime = micros();
-  _events[idx].func = callback;
+  _events[idx] = {timer, callback};
   _nAt = 0;
 }
-
-void TimerManager::every(uint32_t period, std::function<void()> callback) {
-  every(period, callback, -1);
-}
-
-void TimerManager::after(uint32_t duration, std::function<void()> callback) {
-  every(duration, callback, 1);
-}
-
 
 void TimerManager::update() {
   update(micros());
@@ -39,33 +72,14 @@ void TimerManager::run() {
 void TimerManager::update(uint32_t now) {
   if (now < _nAt)
     return;
-  uint32_t at;
+  _nAt = now;
   for (int8_t i = 0; i < maxNumberOfEvents; ++i)  {
-    if (_events[i].repeatCount != 0) { // Event is setup
-      bool needTrigger = false;
-      if (_events[i].lastTime >= (nowMaxValue - _events[i].period)) { // would overflow
-        _nAt = 0;
-        at = _events[i].lastTime - (nowMaxValue / 2);
-        at += _events[i].period;
-        if (at <= (now - (nowMaxValue / 2))) { // Need trigger
-          needTrigger = true;
-        }
-      } else {
-        at = _events[i].lastTime + _events[i].period;
-        if (at <= now) { // Need trigger
-          needTrigger = true;
-        }
-      }
-      if (needTrigger) {
-        _events[i].lastTime = now;
-        if (_events[i].repeatCount > 0) {
-          _events[i].repeatCount -= 1;
-        }
-        _nAt = now;
-        _events[i].func();
-      } else {
-        if (at < _nAt) {
-          _nAt = at;
+    if (_events[i].timer.repeatLeft() != 0) { // Event is setup
+      if (_events[i].timer.update(now)) {
+        _events[i].cb();
+        uint32_t nextTrigger = _events[i].timer.nextTriggerus(now);
+        if (nextTrigger < _nAt) {
+          _nAt = nextTrigger;
         }
       }
     }
@@ -74,8 +88,10 @@ void TimerManager::update(uint32_t now) {
 
 int8_t TimerManager::findFreeEventIndex() {
   for (int8_t i = 0; i < maxNumberOfEvents; ++i)  {
-    if (_events[i].repeatCount == 0)
+    if (_events[i].timer.repeatLeft() == 0)
       return i;
   }
   return -1;
 }
+
+};

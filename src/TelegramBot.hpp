@@ -14,7 +14,7 @@ constexpr uint16_t botMtbs = 500; //mean time between scan messages
 
 class TelegramBot : public IJob {
 public:
-  TelegramBot(TimerManager& tm, String const& telegramToken, uint16_t checkIntervalMs = botMtbs);
+  TelegramBot(String const& telegramToken, uint16_t checkIntervalMs = botMtbs);
   virtual ~TelegramBot() = default;
 
   void run() override;
@@ -25,6 +25,7 @@ private:
   UniversalTelegramBot _bot;
 
 private:
+  Timer::Timer _timer;
   std::function<void(UniversalTelegramBot& bot, int idxNewMess)> _messagesHandler;
 };
 

@@ -1,7 +1,7 @@
 #include "Velux.hpp"
 
-Velux::Velux(WebServer& svr, TimerManager& tm, TelegramBot& tBot, int gpioPin)
-: _gpioPin(gpioPin) {
+Velux::Velux(WebServer& svr, TelegramBot& tBot, int gpioPin)
+: _ticker(tickInus, -1), _gpioPin(gpioPin) {
   _sending = false;
   _data = s4624Proto(Rotor::M1, Way::STOP);
   _needSend = true;
@@ -30,10 +30,6 @@ Velux::Velux(WebServer& svr, TimerManager& tm, TelegramBot& tBot, int gpioPin)
 
   tBot.setMessageHandler([this](UniversalTelegramBot& bot, int idx) {
     this->_handleNewMessages(bot, idx);
-  });
-
-  tm.every(tickInus, [this]() {
-    handleSignal();
   });
 }
 
@@ -77,7 +73,9 @@ void Velux::switchSignal() {
 }
 
 void Velux::run() {
-  handleSignal();
+  if (_ticker.update(micros())) {
+    handleSignal();
+  }
 }
 
 void Velux::_handleRoot(WebServer& svr) {
