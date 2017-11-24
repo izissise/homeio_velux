@@ -10,7 +10,7 @@
 #include "IJob.hpp"
 #include "Timer.hpp"
 
-constexpr uint16_t botMtbs = 500; //mean time between scan messages
+constexpr uint16_t botMtbs = 2000; //mean time between scan messages
 
 class TelegramBot : public IJob {
 public:

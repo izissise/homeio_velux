@@ -8,7 +8,7 @@ void TelegramBot::run() {
   if (_timer.update()) {
     int numNewMessages = 0;
     while (((numNewMessages = _bot.getUpdates(_bot.last_message_received + 1)) > 0)
-      && (numNewMessages < HANDLE_MESSAGES)) {
+      && (numNewMessages <= HANDLE_MESSAGES)) {
       _messagesHandler(_bot, numNewMessages);
       }
   }
