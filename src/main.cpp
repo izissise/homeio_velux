@@ -13,25 +13,29 @@
 #include <memory>
 
 #define BAUD_RATE 115200
+#define LED 16
 #define HOSTNAME "velux"
 #define WIFIAPSSID "velux"
 #define WIFIAPPASS "esp8266wifi"
-#define TELEGRAMBOTTOKEN ""
+#define TELEGRAMBOTTOKEN "401430405:AAFNTU-Rm9tAFnm6JUKdQi1c08yQ3MgnCUw"
 
 std::unique_ptr<Esp> esp;
 Timer::Timer isAlive(500000, -1);
 
 void setup() {
-  delay(1);
+  delay(100);
   //   Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_TX_ONLY);
   Serial.begin(BAUD_RATE);
   while (!Serial) {
     yield();
   }
   ESP.eraseConfig();
-  Serial.print(F("\r\n---------Starting ESP8266----------\r\nReboot reason -> "));
+  Serial.print(F("\r\n-------Starting ESP8266--------\r\nReboot reason -> "));
   Serial.println(ESP.getResetInfo());
 
+  pinMode(LED, OUTPUT);
+  delay(2);
+  digitalWrite(LED, !digitalRead(LED));
   esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS));
   Serial.println(F("Connected!"));
 
@@ -42,7 +46,7 @@ void setup() {
 //   auto wss = std::make_shared<WSServer>(81);
 //   auto wsserial = std::make_shared<WSSerialConsole>(*wsvr, *wss);
   auto telegramBot = std::make_shared<TelegramBot>(TELEGRAMBOTTOKEN);
-  auto velux = std::make_shared<Velux>(*wsvr, *telegramBot, 14);
+  auto velux = std::make_shared<Velux>(*wsvr, *telegramBot, 4);
 
   esp->addJob(tm);
   esp->addJob(wsvr);
@@ -61,6 +65,7 @@ void loop() {
   uint32_t now = micros();
   if (isAlive.update(now)) {
     esp->tcpCleanup(); // Cleanup tcp sockets
+    digitalWrite(LED, !digitalRead(LED));
     Serial.print("."); // Blink using serial
   }
   esp->run();
