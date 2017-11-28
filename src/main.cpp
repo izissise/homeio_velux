@@ -13,7 +13,6 @@
 #include <memory>
 
 #define BAUD_RATE 115200
-#define LED 15
 #define HOSTNAME "velux"
 #define WIFIAPSSID "velux"
 #define WIFIAPPASS "esp8266wifi"
@@ -34,9 +33,6 @@ void setup() {
   Serial.print(F("\r\n-------Starting ESP8266--------\r\nReboot reason -> "));
   Serial.println(ESP.getResetInfo());
 
-  pinMode(LED, OUTPUT);
-  delay(2);
-  digitalWrite(LED, HIGH);
   esp.reset(new Esp(HOSTNAME, WIFIAPSSID, WIFIAPPASS));
   Serial.println(F("Connected!"));
 
@@ -69,7 +65,6 @@ void loop() {
       esp->tcpCleanup(); // Cleanup tcp sockets
       needCleanup = 0;
     } else { ++needCleanup; }
-    digitalWrite(LED, !digitalRead(LED));
     Serial.print("."); // Blink using serial
   }
   esp->run();

@@ -13,7 +13,7 @@
 
 #include "S4624Proto.hpp"
 
-constexpr uint16_t backupSignalStartTick = 2010;
+constexpr uint16_t backupSignalStartTick = 1840;
 constexpr uint16_t timeoutLastCheckTick = 7168;
 
 constexpr uint8_t signalStartValue = 0;
